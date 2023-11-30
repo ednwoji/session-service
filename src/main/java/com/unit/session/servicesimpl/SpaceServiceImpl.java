@@ -43,6 +43,8 @@ public class SpaceServiceImpl implements SpaceService {
             spaces.setSpaceType(SpaceTypes.valueOf(spaceDto.getSpaceType()));
             spaces.setLng(result.lng);
             spaces.setLat(result.lat);
+            spaces.setChargePerDay(Double.parseDouble(spaceDto.getChargePerDay()));
+            spaces.setDescription(spaceDto.getDescription());
 
             spaces1 = spaceRepository.save(spaces);
         }
