@@ -5,6 +5,7 @@ import com.unit.session.dto.CustomResponse;
 import com.unit.session.dto.Responses;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
+import com.unit.session.entities.BookedSpaces;
 import com.unit.session.entities.Spaces;
 import com.unit.session.services.SpaceService;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +69,13 @@ public class SpaceController {
 
         customResponse = new CustomResponse(Responses.SPACE_CREATED.getCode(), Responses.SPACE_CREATED.getMessage());
         return new ResponseEntity<>(customResponse, HttpStatus.OK);
+    }
 
 
+    @PostMapping("/getbookedspaces")
+    public ResponseEntity<?> getBookedSpacesForTenants(@RequestBody UsersDto usersDto) {
+        log.info("Incoming payload to get list of booked spaces for tenants:: "+usersDto.toString());
+        List<BookedSpaces> spaces = spaceService.findAllBookedSpacesForTenants(usersDto.getUserId());
+        return new ResponseEntity<>(spaces, HttpStatus.OK);
     }
 }

@@ -4,16 +4,15 @@ import com.google.maps.model.LatLng;
 import com.unit.session.Utilities.Utils;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
-import com.unit.session.entities.Booking;
-import com.unit.session.entities.SpaceTypes;
-import com.unit.session.entities.Spaces;
-import com.unit.session.entities.Users;
+import com.unit.session.entities.*;
+import com.unit.session.repositories.BookedSpacesRepository;
 import com.unit.session.repositories.SpaceRepository;
 import com.unit.session.services.SpaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,6 +21,9 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Autowired
     private SpaceRepository spaceRepository;
+
+    @Autowired
+    private BookedSpacesRepository bookedSpacesRepository;
 
     @Autowired
     private Utils utils;
@@ -70,6 +72,27 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     public void updateSpaceBookingStatus(Spaces spaces, SpaceDto spaceDto) {
         spaces.setBookingStatus(Booking.valueOf(spaceDto.getBookingStatus()));
-        spaceRepository.save(spaces);
+        Spaces newSpace = spaceRepository.save(spaces);
+        bookSpaceForTenant(newSpace, spaceDto);
+    }
+
+    @Override
+    public List<BookedSpaces> findAllBookedSpacesForTenants(String userId) {
+        return bookedSpacesRepository.findByBookedBy(utils.validateUserId(userId));
+    }
+
+    public void bookSpaceForTenant(Spaces spaces, SpaceDto spaceDto) {
+
+        log.info("Booking spaces for tenant:::");
+        BookedSpaces bookedSpaces = new BookedSpaces();
+        bookedSpaces.setBookedBy(utils.validateUserId(spaceDto.getUserId()));
+        bookedSpaces.setSpaceId(spaces);
+        bookedSpaces.setSpaceOwner(spaces.getSpaceOwner());
+        bookedSpaces.setBookedTime(LocalDateTime.now());
+        bookedSpaces.setExpiryDate(LocalDateTime.now().plusDays(1L));
+        bookedSpaces.setDuration(1);
+
+        bookedSpacesRepository.save(bookedSpaces);
+
     }
 }

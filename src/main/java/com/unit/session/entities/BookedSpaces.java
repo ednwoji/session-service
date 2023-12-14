@@ -28,7 +28,7 @@ public class BookedSpaces {
     private Users spaceOwner;
 
     @ManyToOne
-    @JoinColumn(name = "space_id", referencedColumnName = "space_id")
+    @JoinColumn(name = "space_id", referencedColumnName = "spaceId")
     private Spaces spaceId;
 
     @Column(name = "booked_time")
