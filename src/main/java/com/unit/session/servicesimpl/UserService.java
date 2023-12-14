@@ -63,4 +63,10 @@ public class UserService implements UserDetailsService {
 
         return users;
     }
+
+    public void updateUserRole(Users users) {
+        String desiredRole = users.getRole().equals(Roles.HOST) ? Roles.TENANT.name() : Roles.HOST.name();
+        users.setRole(Roles.valueOf(desiredRole));
+        userRepository.save(users);
+    }
 }

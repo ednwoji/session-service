@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Table(name = "spaces")
 public class Spaces {
 
@@ -51,6 +51,14 @@ public class Spaces {
     @Column(name = "description")
     private String description;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "booking_status")
+    private Booking bookingStatus;
+
 //    @Column(name = "capacity")
 //    private int capacity;
+
+    public Spaces() {
+        this.bookingStatus = Booking.PENDING;
+    }
 }

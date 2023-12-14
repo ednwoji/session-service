@@ -4,6 +4,7 @@ import com.google.maps.model.LatLng;
 import com.unit.session.Utilities.Utils;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
+import com.unit.session.entities.Booking;
 import com.unit.session.entities.SpaceTypes;
 import com.unit.session.entities.Spaces;
 import com.unit.session.entities.Users;
@@ -63,6 +64,12 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public Spaces findSpaceBySpaceId(String spaceId) {
-        return spaceRepository.findBySpaceId(Long.parseLong(spaceId)).orElse(null);
+        return spaceRepository.findBySpaceIdAndBookingStatus(Long.parseLong(spaceId), Booking.PENDING).orElse(null);
+    }
+
+    @Override
+    public void updateSpaceBookingStatus(Spaces spaces, SpaceDto spaceDto) {
+        spaces.setBookingStatus(Booking.valueOf(spaceDto.getBookingStatus()));
+        spaceRepository.save(spaces);
     }
 }

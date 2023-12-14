@@ -18,4 +18,5 @@ public class SpaceDto {
     private String spaceId;
     private String chargePerDay;
     private String description;
+    private String bookingStatus;
 }

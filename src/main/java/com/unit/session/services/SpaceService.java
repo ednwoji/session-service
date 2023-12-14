@@ -12,4 +12,6 @@ public interface SpaceService {
     List<Spaces> findSpaceByUser(UsersDto usersDto);
 
     Spaces findSpaceBySpaceId(String spaceId);
+
+    void updateSpaceBookingStatus(Spaces spaces, SpaceDto spaceDto);
 }

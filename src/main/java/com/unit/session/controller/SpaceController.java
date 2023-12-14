@@ -43,8 +43,11 @@ public class SpaceController {
     public ResponseEntity<?> findAllSpacesByUserId(@RequestBody UsersDto usersDto) {
         log.info("Incoming payload for space retrieval is "+usersDto.toString());
         List<Spaces> allSpaces = spaceService.findSpaceByUser(usersDto);
-        log.info("Retrieved Space is "+allSpaces.get(0).getSpaceLocation());
-        return new ResponseEntity<>(allSpaces, HttpStatus.OK);
+        if(!allSpaces.isEmpty()) {
+            log.info("Retrieved Space is "+allSpaces.get(0).getSpaceLocation());
+            return new ResponseEntity<>(allSpaces, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
@@ -54,5 +57,18 @@ public class SpaceController {
         Spaces space = spaceService.findSpaceBySpaceId(spaceDto.getSpaceId());
         log.info("Retrieved space for the ID is "+space.getSpaceLocation());
         return new ResponseEntity<>(space, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/book-space")
+    public ResponseEntity<?> updateBookingStatusOfSpace(@RequestBody SpaceDto spaceDto, CustomResponse customResponse) {
+        log.info("Incoming payload for updating spaces is "+spaceDto.toString());
+        Spaces spaces = spaceService.findSpaceBySpaceId(spaceDto.getSpaceId());
+        spaceService.updateSpaceBookingStatus(spaces, spaceDto);
+
+        customResponse = new CustomResponse(Responses.SPACE_CREATED.getCode(), Responses.SPACE_CREATED.getMessage());
+        return new ResponseEntity<>(customResponse, HttpStatus.OK);
+
+
     }
 }

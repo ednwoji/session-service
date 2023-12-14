@@ -5,6 +5,7 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
+import com.unit.session.entities.Booking;
 import com.unit.session.entities.Spaces;
 import com.unit.session.repositories.SpaceRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class GeoCodingService {
 
 
     public List<Spaces> findNearestLocations(double currentLatitude, double currentLongitude) {
-        List<Spaces> allLocations = spaceRepository.findAll();
+        List<Spaces> allLocations = spaceRepository.findByBookingStatus(Booking.PENDING);
         return calculateDistancesAndSort(allLocations, currentLatitude, currentLongitude);
     }
 

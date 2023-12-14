@@ -77,4 +77,16 @@ public class UserController {
         log.info("Retrieved user for the ID is "+users.getFirstName());
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
+
+
+    @PostMapping("/updateUserRole")
+    public ResponseEntity<?> updateUserRole(@RequestBody UsersDto usersDto) {
+        log.info("Incoming request to update role::: "+usersDto.toString());
+        Users users = utils.validateUserId(usersDto.getUserId());
+        if(users != null) {
+            userService.updateUserRole(users);
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
 }
