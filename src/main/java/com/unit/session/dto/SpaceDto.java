@@ -19,5 +19,13 @@ public class SpaceDto {
     private String chargePerDay;
     private String description;
     private String bookingStatus;
+
+    private String size;
+    private String visitDays;
+    private String visitStartTime;
+    private String visitEndTime;
+    private String practice;
+    private String musicDetails;
+    private String additionalDetails;
     private int duration;
 }

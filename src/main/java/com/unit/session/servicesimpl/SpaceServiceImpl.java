@@ -39,17 +39,27 @@ public class SpaceServiceImpl implements SpaceService {
         LatLng result = utils.getLatLng(spaceDto.getSpaceLocation());
         log.info("Result is "+result.toString());
         if (users != null) {
-            Spaces spaces = new Spaces();
-            spaces.setSpaceOwner(users);
-            spaces.setSpaceImage(spaceDto.getSpaceImage());
-            spaces.setSpaceLocation(spaceDto.getSpaceLocation());
-            spaces.setSpaceType(SpaceTypes.valueOf(spaceDto.getSpaceType()));
-            spaces.setLng(result.lng);
-            spaces.setLat(result.lat);
-            spaces.setChargePerDay(Double.parseDouble(spaceDto.getChargePerDay()));
-            spaces.setDescription(spaceDto.getDescription());
+                Spaces spaces = new Spaces();
+                spaces.setSpaceOwner(users);
+                spaces.setSpaceImage(spaceDto.getSpaceImage());
+                spaces.setSpaceLocation(spaceDto.getSpaceLocation());
+                spaces.setSpaceType(spaceDto.getSpaceType());
+                spaces.setLng(result.lng);
+                spaces.setLat(result.lat);
+                spaces.setChargePerDay(Double.parseDouble(spaceDto.getChargePerDay()));
+                spaces.setDescription(spaceDto.getDescription());
+                spaces.setSize(spaceDto.getSize());
+                spaces.setMusicDetails(spaceDto.getMusicDetails());
+                spaces.setPractice(spaceDto.getPractice());
+                spaces.setVisitEndTime(spaceDto.getVisitEndTime());
+                spaces.setVisitStartTime(spaceDto.getVisitStartTime());
+                spaces.setVisitDays(spaceDto.getVisitDays());
+                spaces.setAdditionalDetails(spaceDto.getAdditionalDetails());
+                spaces.setDateAdded(LocalDateTime.now());
 
-            spaces1 = spaceRepository.save(spaces);
+                log.info("Spaces to be saved is " + spaces.toString());
+                spaces1 = spaceRepository.save(spaces);
+
         }
         return spaces1;
     }

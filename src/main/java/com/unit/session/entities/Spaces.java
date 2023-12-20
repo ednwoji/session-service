@@ -7,6 +7,7 @@ import org.hibernate.annotations.ManyToAny;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -22,9 +23,9 @@ public class Spaces {
     @Column(name = "space_location")
     private String spaceLocation;
 
-    @Enumerated(value = EnumType.STRING)
+//    @Enumerated(value = EnumType.STRING)
     @Column(name = "space_type")
-    private SpaceTypes spaceType;
+    private String spaceType;
 
     @ManyToOne
     @JoinColumn(name = "space_owner", referencedColumnName = "user_id")
@@ -54,6 +55,30 @@ public class Spaces {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "booking_status")
     private Booking bookingStatus;
+
+    @Column(name = "size")
+    private String size;
+
+    @Column(name = "visit_day")
+    private String visitDays;
+
+    @Column(name = "visit_start_time")
+    private String visitStartTime;
+
+    @Column(name = "visit_end_time")
+    private String visitEndTime;
+
+    @Column(name = "practice_with_tenant")
+    private String practice;
+
+    @Column(name = "music_availability")
+    private String musicDetails;
+
+    @Column(name = "additional_note")
+    private String additionalDetails;
+
+    @Column(name = "date_added")
+    private LocalDateTime dateAdded;
 
 //    @Column(name = "capacity")
 //    private int capacity;
