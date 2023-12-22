@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.util.ArrayList;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +15,7 @@ public class SpaceDto {
     private String userId;
     private String spaceLocation;
     private String spaceType;
-    private String spaceImage;
+    private ArrayList<String> spaceImage;
     private String spaceId;
     private String chargePerDay;
     private String description;

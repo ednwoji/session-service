@@ -6,13 +6,16 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import com.unit.session.entities.Booking;
+import com.unit.session.entities.SpaceImages;
 import com.unit.session.entities.Spaces;
+import com.unit.session.repositories.SpaceImagesRepository;
 import com.unit.session.repositories.SpaceRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +26,9 @@ public class GeoCodingService {
 
     @Autowired
     private SpaceRepository spaceRepository;
+
+    @Autowired
+    private SpaceImagesRepository spaceImagesRepository;
 
     @Value("${google.api.key}") // Add your API key in application.properties or application.yml
     private String apiKey;
@@ -52,6 +58,7 @@ public class GeoCodingService {
                 .sorted(Comparator.comparingDouble(Spaces::getDistance))
                 .collect(Collectors.toList());
     }
+
 
     private double calculateHaversineDistance(double startLat, double startLon, double endLat, double endLon) {
         final int R = 6371; // Radius of the Earth in kilometers

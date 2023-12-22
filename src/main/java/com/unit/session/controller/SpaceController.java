@@ -6,6 +6,7 @@ import com.unit.session.dto.Responses;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
 import com.unit.session.entities.BookedSpaces;
+import com.unit.session.entities.SpaceImages;
 import com.unit.session.entities.Spaces;
 import com.unit.session.services.SpaceService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,8 @@ public class SpaceController {
     @PostMapping("/add-space")
     public ResponseEntity<?> addSpace(@RequestBody SpaceDto spaceDto, CustomResponse customResponse) {
 
-        log.info("Incoming payload for spaces "+spaceDto.toString());
+        log.info("Incoming payload for spaces creation::::::::: ");
+
         try {
             Spaces spaces = spaceService.saveSpace(spaceDto);
             customResponse = new CustomResponse(Responses.SPACE_CREATED.getCode(), Responses.SPACE_CREATED.getMessage());
@@ -50,6 +52,20 @@ public class SpaceController {
         }
         return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+    @PostMapping("/getSpaceImages")
+    public ResponseEntity<?> findAllSpaceImagesByUserId(@RequestBody UsersDto usersDto) {
+        log.info("Incoming payload for space retrieval is "+usersDto.toString());
+        List<SpaceImages> allSpaces = spaceService.findSpaceImagesByUser(usersDto);
+        if(!allSpaces.isEmpty()) {
+            log.info("Retrieved Space is "+allSpaces.get(0).getSpaceImageId());
+            return new ResponseEntity<>(allSpaces, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+
 
 
     @PostMapping("/findById")

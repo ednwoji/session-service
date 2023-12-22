@@ -6,12 +6,14 @@ import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
 import com.unit.session.entities.*;
 import com.unit.session.repositories.BookedSpacesRepository;
+import com.unit.session.repositories.SpaceImagesRepository;
 import com.unit.session.repositories.SpaceRepository;
 import com.unit.session.services.SpaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +24,10 @@ public class SpaceServiceImpl implements SpaceService {
     @Autowired
     private SpaceRepository spaceRepository;
 
+
+    @Autowired
+    private SpaceImagesRepository spaceImagesRepository;
+
     @Autowired
     private BookedSpacesRepository bookedSpacesRepository;
 
@@ -29,6 +35,7 @@ public class SpaceServiceImpl implements SpaceService {
     private Utils utils;
 
     @Override
+    @Transactional
     public Spaces saveSpace(SpaceDto spaceDto) {
         if(spaceDto.getSpaceImage() == null || spaceDto.getSpaceType() == null || spaceDto.getSpaceLocation() == null) {
             throw new RuntimeException("Please fill all details");
@@ -41,7 +48,7 @@ public class SpaceServiceImpl implements SpaceService {
         if (users != null) {
                 Spaces spaces = new Spaces();
                 spaces.setSpaceOwner(users);
-                spaces.setSpaceImage(spaceDto.getSpaceImage());
+                spaces.setSpaceImage(spaceDto.getSpaceImage().get(0));
                 spaces.setSpaceLocation(spaceDto.getSpaceLocation());
                 spaces.setSpaceType(spaceDto.getSpaceType());
                 spaces.setLng(result.lng);
@@ -57,8 +64,19 @@ public class SpaceServiceImpl implements SpaceService {
                 spaces.setAdditionalDetails(spaceDto.getAdditionalDetails());
                 spaces.setDateAdded(LocalDateTime.now());
 
-                log.info("Spaces to be saved is " + spaces.toString());
                 spaces1 = spaceRepository.save(spaces);
+                log.info("Spaces saved successfully");
+
+                for(String image : spaceDto.getSpaceImage()) {
+                    SpaceImages spaceImages = new SpaceImages();
+                    spaceImages.setSpaceImage(image);
+                    spaceImages.setSpaces(spaces1);
+                    spaceImages.setSpaceOwner(users);
+
+                    spaceImagesRepository.save(spaceImages);
+                }
+                log.info("Spaces images saved successfully");
+
 
         }
         return spaces1;
@@ -89,6 +107,16 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     public List<BookedSpaces> findAllBookedSpacesForTenants(String userId) {
         return bookedSpacesRepository.findByBookedBy(utils.validateUserId(userId));
+    }
+
+    @Override
+    public List<SpaceImages> findSpaceImagesByUser(UsersDto usersDto) {
+        Users user = utils.validateUserId(usersDto.getUserId());
+        if(user != null) {
+            return spaceImagesRepository.findBySpaceOwner(user);
+        }
+
+        return null;
     }
 
     public void bookSpaceForTenant(Spaces spaces, SpaceDto spaceDto) {

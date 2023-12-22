@@ -66,7 +66,7 @@ public class UserController {
         catch(BadCredentialsException e) {
             log.info("Failed to log in::::");
             customResponse = new CustomResponse(Responses.WRONG_CREDENTIALS.getCode(), Responses.WRONG_CREDENTIALS.getMessage());
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
         }
     }
 
