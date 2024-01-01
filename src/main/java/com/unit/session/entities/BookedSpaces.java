@@ -40,4 +40,10 @@ public class BookedSpaces {
     @Column(name = "expiry_date")
     private LocalDateTime expiryDate;
 
+    @Column(name = "start_date_time")
+    private String startDateTime;
+
+    @Column(name = "end_date_time")
+    private String endDateTime;
+
 }

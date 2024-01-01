@@ -20,6 +20,7 @@ public class SpaceDto {
     private String chargePerDay;
     private String description;
     private String bookingStatus;
+    private ArrayList<String> spaceRules;
 
     private String size;
     private String visitDays;
@@ -29,4 +30,6 @@ public class SpaceDto {
     private String musicDetails;
     private String additionalDetails;
     private int duration;
+    private String startDateTime;
+    private String endDateTime;
 }

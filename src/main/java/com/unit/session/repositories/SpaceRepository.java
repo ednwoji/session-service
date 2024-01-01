@@ -15,4 +15,6 @@ public interface SpaceRepository extends JpaRepository<Spaces, Long> {
     List<Spaces> findByBookingStatus(Booking booking);
 
     Optional<Spaces> findBySpaceIdAndBookingStatus(long spaceId, Booking booking);
+
+    Optional<Spaces> findBySpaceId(long spaceId);
 }

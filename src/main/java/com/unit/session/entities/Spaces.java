@@ -8,6 +8,8 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -61,6 +63,10 @@ public class Spaces {
 
     @Column(name = "visit_day")
     private String visitDays;
+
+    @ElementCollection
+    @Column(name = "space_rules")
+    private List<String> spaceRules;
 
     @Column(name = "visit_start_time")
     private String visitStartTime;

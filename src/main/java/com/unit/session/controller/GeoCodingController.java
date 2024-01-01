@@ -29,6 +29,13 @@ public class GeoCodingController {
         }
     }
 
+
+    @PostMapping("/filterspaces")
+    public List<Spaces> findAllSpacesByAddress(@RequestBody LocationDto locationDto) throws Exception {
+        log.info("Incoming address is ::"+locationDto.getAddress());
+        return geocodingService.findSpacesByAddress(locationDto.getAddress());
+    }
+
     @PostMapping("/getnearestlocations")
     public List<Spaces> getLocationsAround(@RequestBody LocationDto locationDto) {
         log.info("Incoming payload to get locations around is "+locationDto.toString());

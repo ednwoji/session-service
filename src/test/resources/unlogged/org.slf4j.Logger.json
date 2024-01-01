@@ -1,0 +1,28 @@
+{
+  "classname" : "org.slf4j.Logger",
+  "storedCandidateMap" : { },
+  "declaredMockMap" : {
+    "org.slf4j.Logger#info#(Ljava/lang/String;)V" : [ {
+      "id" : "b33ee2ce-6123-4136-8803-98970171d847",
+      "name" : "mock response log.info",
+      "fieldTypeName" : "org.slf4j.Logger",
+      "sourceClassName" : "com.unit.session.controller.SpaceController",
+      "fieldName" : "log",
+      "methodName" : "info",
+      "whenParameter" : [ {
+        "name" : "s",
+        "type" : "ANY_OF_TYPE",
+        "value" : "java.lang.String"
+      } ],
+      "thenParameter" : [ {
+        "returnParameter" : {
+          "declaredMocks" : [ ],
+          "value" : "success",
+          "returnValueType" : "REAL",
+          "className" : "void"
+        },
+        "methodExitType" : "NORMAL"
+      } ]
+    } ]
+  }
+}

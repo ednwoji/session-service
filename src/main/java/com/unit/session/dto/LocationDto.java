@@ -12,4 +12,6 @@ public class LocationDto {
 
     private double latitude;
     private double longitude;
+    private String address;
 }
+

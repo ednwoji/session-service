@@ -63,6 +63,7 @@ public class SpaceServiceImpl implements SpaceService {
                 spaces.setVisitDays(spaceDto.getVisitDays());
                 spaces.setAdditionalDetails(spaceDto.getAdditionalDetails());
                 spaces.setDateAdded(LocalDateTime.now());
+                spaces.setSpaceRules(spaceDto.getSpaceRules());
 
                 spaces1 = spaceRepository.save(spaces);
                 log.info("Spaces saved successfully");
@@ -94,7 +95,9 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public Spaces findSpaceBySpaceId(String spaceId) {
-        return spaceRepository.findBySpaceIdAndBookingStatus(Long.parseLong(spaceId), Booking.PENDING).orElse(null);
+//        return spaceRepository.findBySpaceIdAndBookingStatus(Long.parseLong(spaceId), Booking.PENDING).orElse(null);
+        return spaceRepository.findBySpaceId(Long.parseLong(spaceId)).orElse(null);
+
     }
 
     @Override
@@ -119,6 +122,12 @@ public class SpaceServiceImpl implements SpaceService {
         return null;
     }
 
+    @Override
+    public Spaces findBookedSpaceBySpaceId(String spaceId) {
+        return spaceRepository.findBySpaceIdAndBookingStatus(Long.parseLong(spaceId), Booking.BOOKED).orElse(null);
+
+    }
+
     public void bookSpaceForTenant(Spaces spaces, SpaceDto spaceDto) {
 
         log.info("Booking spaces for tenant:::");
@@ -128,7 +137,9 @@ public class SpaceServiceImpl implements SpaceService {
         bookedSpaces.setSpaceOwner(spaces.getSpaceOwner());
         bookedSpaces.setBookedTime(LocalDateTime.now());
         bookedSpaces.setExpiryDate(LocalDateTime.now().plusDays(1L));
-        bookedSpaces.setDuration(1);
+        bookedSpaces.setDuration(spaceDto.getDuration());
+        bookedSpaces.setStartDateTime(spaceDto.getStartDateTime());
+        bookedSpaces.setEndDateTime(spaceDto.getEndDateTime());
 
         bookedSpacesRepository.save(bookedSpaces);
 

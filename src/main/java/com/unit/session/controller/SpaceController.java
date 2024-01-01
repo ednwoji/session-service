@@ -69,9 +69,18 @@ public class SpaceController {
 
 
     @PostMapping("/findById")
-    public ResponseEntity<?> findAllSpacesBySpaceId(@RequestBody SpaceDto spaceDto) {
+    public ResponseEntity<?> findAllPendingSpacesBySpaceId(@RequestBody SpaceDto spaceDto) {
         log.info("Incoming payload for spaces is "+spaceDto.toString());
         Spaces space = spaceService.findSpaceBySpaceId(spaceDto.getSpaceId());
+        log.info("Retrieved space for the ID is "+space.getSpaceLocation());
+        return new ResponseEntity<>(space, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/findBookedById")
+    public ResponseEntity<?> findAllBookedSpacesBySpaceId(@RequestBody SpaceDto spaceDto) {
+        log.info("Incoming payload for spaces is "+spaceDto.toString());
+        Spaces space = spaceService.findBookedSpaceBySpaceId(spaceDto.getSpaceId());
         log.info("Retrieved space for the ID is "+space.getSpaceLocation());
         return new ResponseEntity<>(space, HttpStatus.OK);
     }

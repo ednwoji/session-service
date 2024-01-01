@@ -4,6 +4,7 @@ package com.unit.session.servicesimpl;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.GeolocationResult;
 import com.google.maps.model.LatLng;
 import com.unit.session.entities.Booking;
 import com.unit.session.entities.SpaceImages;
@@ -30,7 +31,7 @@ public class GeoCodingService {
     @Autowired
     private SpaceImagesRepository spaceImagesRepository;
 
-    @Value("${google.api.key}") // Add your API key in application.properties or application.yml
+    @Value("${google.api.key}")
     private String apiKey;
 
     public LatLng getLatLngFromAddress(String address) throws Exception {
@@ -42,6 +43,20 @@ public class GeoCodingService {
             throw new RuntimeException("No results found for the given address");
         }
     }
+
+    public List<Spaces> findSpacesByAddress(String address) throws Exception {
+        LatLng geolocationResult = getLatLngFromAddress(address);
+        double targetLatitude = geolocationResult.lat;
+        double targetLongitude = geolocationResult.lng;
+        log.info("Latitude and Longitude is ::"+targetLatitude+" and "+targetLongitude);
+        List<Spaces> allSpaces = spaceRepository.findAll();
+        return allSpaces.stream()
+                .sorted(Comparator.comparingDouble(space ->
+                        calculateHaversineDistance(targetLatitude, targetLongitude, space.getLat(), space.getLng())))
+                .collect(Collectors.toList());
+    }
+
+
 
 
     public List<Spaces> findNearestLocations(double currentLatitude, double currentLongitude) {

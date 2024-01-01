@@ -1,5 +1,6 @@
 package com.unit.session;
 
+import io.unlogged.Unlogged;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,7 @@ public class SessionApplication extends SpringBootServletInitializer {
 		return application.sources(SessionApplication.class);
 	}
 
+    @Unlogged
 	public static void main(String[] args) {
 		SpringApplication.run(SessionApplication.class, args);
 	}

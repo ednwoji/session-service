@@ -20,4 +20,6 @@ public interface SpaceService {
     List<BookedSpaces> findAllBookedSpacesForTenants(String userId);
 
     List<SpaceImages> findSpaceImagesByUser(UsersDto usersDto);
+
+    Spaces findBookedSpaceBySpaceId(String spaceId);
 }
