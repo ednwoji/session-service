@@ -5,6 +5,7 @@ import com.unit.session.Utilities.Utils;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
 import com.unit.session.entities.*;
+import com.unit.session.repositories.AccountsRepository;
 import com.unit.session.repositories.BookedSpacesRepository;
 import com.unit.session.repositories.SpaceImagesRepository;
 import com.unit.session.repositories.SpaceRepository;
@@ -30,6 +31,9 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Autowired
     private BookedSpacesRepository bookedSpacesRepository;
+
+    @Autowired
+    private AccountsRepository accountsRepository;
 
     @Autowired
     private Utils utils;
@@ -105,6 +109,7 @@ public class SpaceServiceImpl implements SpaceService {
         spaces.setBookingStatus(Booking.valueOf(spaceDto.getBookingStatus()));
         Spaces newSpace = spaceRepository.save(spaces);
         bookSpaceForTenant(newSpace, spaceDto);
+        addAccountForHost(newSpace, spaceDto);
     }
 
     @Override
@@ -142,6 +147,31 @@ public class SpaceServiceImpl implements SpaceService {
         bookedSpaces.setEndDateTime(spaceDto.getEndDateTime());
 
         bookedSpacesRepository.save(bookedSpaces);
+
+    }
+
+
+    public void addAccountForHost(Spaces spaces, SpaceDto spaceDto) {
+        log.info("Funding host acccount with "+spaces.getChargePerDay());
+        log.info("Total cost is "+spaceDto.getDuration());
+
+        double totalAmount = spaceDto.getDuration() * spaces.getChargePerDay();
+
+        Users hostUser = spaces.getSpaceOwner();
+        Accounts accounts1 = accountsRepository.findByHostName(hostUser).orElse(null);
+
+        if(accounts1 == null) {
+            Accounts accounts = new Accounts();
+            accounts.setAccountBalance(totalAmount);
+            accounts.setAmountWithdrawn(0);
+            accounts.setHostName(hostUser);
+            accountsRepository.save(accounts);
+        }
+
+        else {
+            accounts1.setAccountBalance(accounts1.getAccountBalance() + totalAmount);
+            accountsRepository.save(accounts1);
+        }
 
     }
 }

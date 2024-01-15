@@ -60,7 +60,8 @@ public class GeoCodingService {
 
 
     public List<Spaces> findNearestLocations(double currentLatitude, double currentLongitude) {
-        List<Spaces> allLocations = spaceRepository.findByBookingStatus(Booking.PENDING);
+//        List<Spaces> allLocations = spaceRepository.findByBookingStatus(Booking.PENDING);
+        List<Spaces> allLocations = spaceRepository.findAll();
         return calculateDistancesAndSort(allLocations, currentLatitude, currentLongitude);
     }
 

@@ -90,10 +90,16 @@ public class SpaceController {
     public ResponseEntity<?> updateBookingStatusOfSpace(@RequestBody SpaceDto spaceDto, CustomResponse customResponse) {
         log.info("Incoming payload for updating spaces is "+spaceDto.toString());
         Spaces spaces = spaceService.findSpaceBySpaceId(spaceDto.getSpaceId());
-        spaceService.updateSpaceBookingStatus(spaces, spaceDto);
+        if(spaces != null) {
+            spaceService.updateSpaceBookingStatus(spaces, spaceDto);
+            customResponse = new CustomResponse(Responses.SPACE_CREATED.getCode(), Responses.SPACE_CREATED.getMessage());
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
+        }
 
-        customResponse = new CustomResponse(Responses.SPACE_CREATED.getCode(), Responses.SPACE_CREATED.getMessage());
-        return new ResponseEntity<>(customResponse, HttpStatus.OK);
+        customResponse = new CustomResponse(Responses.UNEXPECTED_ERROR.getCode(), Responses.UNEXPECTED_ERROR.getMessage());
+        return new ResponseEntity<>(customResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+
+
     }
 
 

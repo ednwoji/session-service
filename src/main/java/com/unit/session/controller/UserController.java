@@ -30,7 +30,6 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
     @Autowired
     private Utils utils;
 
