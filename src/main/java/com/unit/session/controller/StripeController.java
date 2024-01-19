@@ -4,7 +4,14 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.param.ChargeCreateParams;
+import com.unit.session.Utilities.Utils;
+import com.unit.session.dto.CustomResponse;
+import com.unit.session.dto.Responses;
+import com.unit.session.dto.UsersDto;
+import com.unit.session.entities.Users;
+import com.unit.session.services.AccountService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +27,12 @@ public class StripeController {
 
     @Value("${stripe.secret.key}")
     private String stripeSecretKey;
+
+    @Autowired
+    private Utils utils;
+
+    @Autowired
+    private AccountService accountService;
 
     @PostMapping("/process-payment")
     public ResponseEntity<?> processPayment(@RequestParam("tokenId") String tokenId,
@@ -47,5 +60,20 @@ public class StripeController {
             log.info("Failed with error "+parts[0].trim());
             return new ResponseEntity<>(parts[0].trim(), HttpStatus.OK);
         }
+    }
+
+
+    @PostMapping("/account-balance")
+    public ResponseEntity<?> getHostAccountBalance(@RequestBody UsersDto usersDto, CustomResponse customResponse) {
+        String balance = null;
+        Users users = utils.validateUserId(usersDto.getUserId());
+
+        if(users == null) {
+            customResponse = new CustomResponse(Responses.WRONG_USERNAME.getCode(), Responses.WRONG_USERNAME.getMessage());
+            return new ResponseEntity<>(customResponse, HttpStatus.FORBIDDEN);
+        }
+        balance = accountService.getAccountBalance(users);
+        log.info("Balance is "+balance);
+        return new ResponseEntity<>(balance, HttpStatus.OK);
     }
 }
