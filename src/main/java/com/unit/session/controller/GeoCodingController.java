@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/map")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 public class GeoCodingController {
 
@@ -34,6 +34,13 @@ public class GeoCodingController {
     public List<Spaces> findAllSpacesByAddress(@RequestBody LocationDto locationDto) throws Exception {
         log.info("Incoming address is ::"+locationDto.getAddress());
         return geocodingService.findSpacesByAddress(locationDto.getAddress());
+    }
+
+
+    @PostMapping("/filterspacesbyradius")
+    public List<Spaces> findAllSpacesByAddressAndRadius(@RequestBody LocationDto locationDto) throws Exception {
+        log.info("Incoming address is ::"+locationDto.getAddress());
+        return geocodingService.findSpacesByAddressWithRadius(locationDto.getAddress());
     }
 
     @PostMapping("/getnearestlocations")

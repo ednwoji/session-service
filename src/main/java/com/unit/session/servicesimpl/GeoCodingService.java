@@ -57,6 +57,28 @@ public class GeoCodingService {
     }
 
 
+    public List<Spaces> findSpacesByAddressWithRadius(String address) throws Exception {
+        LatLng geolocationResult = getLatLngFromAddress(address);
+        double targetLatitude = geolocationResult.lat;
+        double targetLongitude = geolocationResult.lng;
+        double radius = 100;
+        log.info("Latitude and Longitude is ::"+targetLatitude+" and "+targetLongitude);
+
+        List<Spaces> allSpaces = spaceRepository.findAll();
+        List<Spaces> spacesAroundAddress = allSpaces.stream()
+                .filter(space ->
+                        isWithinRadius(targetLatitude, targetLongitude, space.getLat(), space.getLng(), radius))
+                .collect(Collectors.toList());
+
+        return spacesAroundAddress;
+    }
+
+    private boolean isWithinRadius(double targetLat, double targetLng, double spaceLat, double spaceLng, double radius) {
+        // Haversine distance calculation
+        double distance = calculateHaversineDistance(targetLat, targetLng, spaceLat, spaceLng);
+        return distance <= radius;
+    }
+
 
 
     public List<Spaces> findNearestLocations(double currentLatitude, double currentLongitude) {

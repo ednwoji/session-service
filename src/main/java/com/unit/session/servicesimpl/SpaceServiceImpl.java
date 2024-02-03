@@ -1,20 +1,20 @@
 package com.unit.session.servicesimpl;
 
 import com.google.maps.model.LatLng;
+import com.unit.session.Utilities.EmailSenderService;
 import com.unit.session.Utilities.Utils;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
 import com.unit.session.entities.*;
-import com.unit.session.repositories.AccountsRepository;
-import com.unit.session.repositories.BookedSpacesRepository;
-import com.unit.session.repositories.SpaceImagesRepository;
-import com.unit.session.repositories.SpaceRepository;
+import com.unit.session.repositories.*;
+import com.unit.session.services.AccountService;
 import com.unit.session.services.SpaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,6 +34,15 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Autowired
     private AccountsRepository accountsRepository;
+
+
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+
+
+    @Autowired
+    private UsersRepository usersRepository;
 
     @Autowired
     private Utils utils;
@@ -110,6 +119,7 @@ public class SpaceServiceImpl implements SpaceService {
         Spaces newSpace = spaceRepository.save(spaces);
         bookSpaceForTenant(newSpace, spaceDto);
         addAccountForHost(newSpace, spaceDto);
+        sendEmail(spaces, spaceDto);
     }
 
     @Override
@@ -173,5 +183,46 @@ public class SpaceServiceImpl implements SpaceService {
             accountsRepository.save(accounts1);
         }
 
+    }
+
+
+
+    public void sendEmail(Spaces spaces, SpaceDto spaceDto) {
+
+        log.info("Sending mail to user:::::");
+        Users user = usersRepository.findByEmail(utils.validateUserId(spaceDto.getUserId()).getEmail()).orElse(null);
+        String htmlContent = null;
+        double totalAmount = spaceDto.getDuration() * spaces.getChargePerDay();
+        double serviceCharge = totalAmount * 0.1;
+        double totalFees = totalAmount + serviceCharge;
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.##");
+        double roundedServiceCharge = Double.parseDouble(decimalFormat.format(serviceCharge));
+        double roundedTotalFees = Double.parseDouble(decimalFormat.format(totalFees));
+
+        if(user != null) {
+
+            htmlContent = "<html><body style='font-family: Arial, sans-serif;'>" +
+                    "<div style='max-width: 600px; margin: 0 auto;'>" + // Set a max-width for the content
+                    "<div style='background-color: #f2f2f2; padding: 20px; border-radius: 10px;'>" + // Bordered box
+                    "<img src='cid:logo' alt='Your Logo' style='width: 100px; height: auto;'>" +
+                    "<p>Dear " + user.getFirstName() + ",</p>" +
+                    "<p>You have successfully booked a space</p>" +
+                    "<p>Space Location: " + spaces.getSpaceLocation() + "</p>" +
+                    "<p><b><h2>Total Fees: " + roundedTotalFees + "</p></b></h2>" +
+                    "<p>Rent Fee: " + totalAmount + "</p>" +
+                    "<p>Charges(10%): " + roundedServiceCharge + "</p>" +
+                    "<p><b>Thank you for choosing Unit Session</b></p>" +
+                    "</div>" +
+                    "</div>" +
+                    "</body></html>";
+
+            try {
+                emailSenderService.sendEmail(user.getEmail(), "Unit Session Payment Receipt", htmlContent);
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }

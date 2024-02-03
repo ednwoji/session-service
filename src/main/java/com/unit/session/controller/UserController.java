@@ -1,5 +1,6 @@
 package com.unit.session.controller;
 
+import com.unit.session.Utilities.EmailSenderService;
 import com.unit.session.Utilities.Utils;
 import com.unit.session.dto.CustomResponse;
 import com.unit.session.dto.Responses;
@@ -18,10 +19,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
 @RequestMapping("/users")
 @RestController
 @Slf4j
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class UserController {
 
     @Autowired
@@ -29,6 +32,8 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+
 
     @Autowired
     private Utils utils;
@@ -50,7 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> validateUser(@RequestBody UsersDto usersDto, CustomResponse customResponse) {
+    public ResponseEntity<?> validateUser(@RequestBody UsersDto usersDto, CustomResponse customResponse) throws MessagingException {
 
         log.info("payload is "+usersDto.toString());
         try{
@@ -59,7 +64,6 @@ public class UserController {
              ));
              log.info("Successfully logged in::::");
             UserDetails userDetails = userService.loadUserByUsername(usersDto.getEmail());
-            log.info("Username is "+userDetails.getUsername());
             return new ResponseEntity<>(userDetails, HttpStatus.OK);
         }
         catch(BadCredentialsException e) {

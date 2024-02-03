@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class})
+@ComponentScan(basePackages = "com.unit.session")
 public class SessionApplication extends SpringBootServletInitializer {
 
 	@Override

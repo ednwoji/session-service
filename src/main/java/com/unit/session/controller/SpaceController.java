@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/spaces")
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @Slf4j
 public class SpaceController {
 
