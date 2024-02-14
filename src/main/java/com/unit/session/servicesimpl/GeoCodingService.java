@@ -49,7 +49,8 @@ public class GeoCodingService {
         double targetLatitude = geolocationResult.lat;
         double targetLongitude = geolocationResult.lng;
         log.info("Latitude and Longitude is ::"+targetLatitude+" and "+targetLongitude);
-        List<Spaces> allSpaces = spaceRepository.findAll();
+        List<Spaces> allSpaces = spaceRepository.findByActive(true);
+        //List<Spaces> allSpaces = spaceRepository.findAll();
         return allSpaces.stream()
                 .sorted(Comparator.comparingDouble(space ->
                         calculateHaversineDistance(targetLatitude, targetLongitude, space.getLat(), space.getLng())))
@@ -64,7 +65,7 @@ public class GeoCodingService {
         double radius = 100;
         log.info("Latitude and Longitude is ::"+targetLatitude+" and "+targetLongitude);
 
-        List<Spaces> allSpaces = spaceRepository.findAll();
+        List<Spaces> allSpaces = spaceRepository.findByActive(true);
         List<Spaces> spacesAroundAddress = allSpaces.stream()
                 .filter(space ->
                         isWithinRadius(targetLatitude, targetLongitude, space.getLat(), space.getLng(), radius))
@@ -83,7 +84,7 @@ public class GeoCodingService {
 
     public List<Spaces> findNearestLocations(double currentLatitude, double currentLongitude) {
 //        List<Spaces> allLocations = spaceRepository.findByBookingStatus(Booking.PENDING);
-        List<Spaces> allLocations = spaceRepository.findAll();
+        List<Spaces> allLocations = spaceRepository.findByActive(true);
         return calculateDistancesAndSort(allLocations, currentLatitude, currentLongitude);
     }
 

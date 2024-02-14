@@ -86,6 +86,9 @@ public class Spaces {
     @Column(name = "date_added")
     private LocalDateTime dateAdded;
 
+    @Column(name = "active")
+    private Boolean active = true;
+
 //    @Column(name = "capacity")
 //    private int capacity;
 

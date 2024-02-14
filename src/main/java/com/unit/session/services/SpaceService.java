@@ -22,4 +22,12 @@ public interface SpaceService {
     List<SpaceImages> findSpaceImagesByUser(UsersDto usersDto);
 
     Spaces findBookedSpaceBySpaceId(String spaceId);
+
+    void deleteSpaceById(String spaceId);
+
+    Spaces updateRules(SpaceDto spaceDto);
+
+    Spaces updateSpaceImages(SpaceDto spaceDto);
+
+    List<Spaces> filterSpacesByPreference(SpaceDto spaceDto);
 }

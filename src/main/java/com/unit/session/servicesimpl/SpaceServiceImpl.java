@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -100,7 +101,7 @@ public class SpaceServiceImpl implements SpaceService {
     public List<Spaces> findSpaceByUser(UsersDto usersDto) {
         Users user = utils.validateUserId(usersDto.getUserId());
         if(user != null) {
-            return spaceRepository.findBySpaceOwner(user);
+            return spaceRepository.findBySpaceOwnerAndActive(user, true);
         }
 
         return null;
@@ -109,7 +110,7 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     public Spaces findSpaceBySpaceId(String spaceId) {
 //        return spaceRepository.findBySpaceIdAndBookingStatus(Long.parseLong(spaceId), Booking.PENDING).orElse(null);
-        return spaceRepository.findBySpaceId(Long.parseLong(spaceId)).orElse(null);
+        return spaceRepository.findBySpaceIdAndActive(Long.parseLong(spaceId), true).orElse(null);
 
     }
 
@@ -139,7 +140,70 @@ public class SpaceServiceImpl implements SpaceService {
 
     @Override
     public Spaces findBookedSpaceBySpaceId(String spaceId) {
-        return spaceRepository.findBySpaceIdAndBookingStatus(Long.parseLong(spaceId), Booking.BOOKED).orElse(null);
+        return spaceRepository.findBySpaceIdAndBookingStatusAndActive(Long.parseLong(spaceId), Booking.BOOKED, true).orElse(null);
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteSpaceById(String spaceId) {
+        Spaces space = spaceRepository.findBySpaceId(Long.valueOf(spaceId)).orElse(null);
+        if(space != null) {
+            space.setActive(false);
+            spaceRepository.save(space);
+        }
+    }
+
+    @Override
+    public Spaces updateRules(SpaceDto spaceDto) {
+        Spaces spaces = spaceRepository.findBySpaceId(Long.valueOf(spaceDto.getSpaceId())).orElse(null);
+        if(spaces != null) {
+            spaces.setSpaceRules(spaceDto.getSpaceRules());
+            return spaceRepository.save(spaces);
+        }
+        return null;
+    }
+
+    @Override
+    public Spaces updateSpaceImages(SpaceDto spaceDto) {
+        Spaces spaces1 = spaceRepository.findBySpaceId(Long.valueOf(spaceDto.getSpaceId())).orElse(null);
+        Users users = utils.validateUserId(spaceDto.getUserId());
+
+        if (spaces1 != null && users != null) {
+            List<SpaceImages> spaceImages = spaceImagesRepository.findBySpaces(spaces1);
+            spaces1.setSpaceImage(spaceDto.getSpaceImage().get(0));
+            spaceRepository.save(spaces1);
+            log.info("Space image updated successfully");
+
+            if(!spaceImages.isEmpty()) {
+                for (SpaceImages images : spaceImages) {
+                    spaceImagesRepository.delete(images);
+                }
+            }
+
+            for(String image : spaceDto.getSpaceImage()) {
+                SpaceImages spaceImages1 = new SpaceImages();
+                spaceImages1.setSpaceImage(image);
+                spaceImages1.setSpaces(spaces1);
+                spaceImages1.setSpaceOwner(users);
+
+                spaceImagesRepository.save(spaceImages1);
+            }
+            log.info("Spaces images saved successfully");
+        }
+
+        return spaces1;
+    }
+
+    @Override
+    public List<Spaces> filterSpacesByPreference(SpaceDto spaceDto) {
+
+//        if(spaceDto.getSpaceLocation() != null && spaceDto.getSpaceType() != null) {
+            return spaceRepository.findBySpaceLocationAndActiveAndSpaceTypeAndChargePerDayBetween(spaceDto.getSpaceType(), spaceDto.getSpaceLocation(), true, spaceDto.getLowerPriceRange(), spaceDto.getUpperPriceRange());
+//            return spaceRepository.findBySpaceLocationAndActiveAndSpaceTypeAndChargePerDayBetween(spaceDto.getLowerPriceRange(), spaceDto.getUpperPriceRange());
+
+
+
 
     }
 

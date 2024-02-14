@@ -32,4 +32,8 @@ public class SpaceDto {
     private int duration;
     private String startDateTime;
     private String endDateTime;
+
+    private double lowerPriceRange;
+    private double upperPriceRange;
+
 }

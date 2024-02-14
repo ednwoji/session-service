@@ -109,4 +109,45 @@ public class SpaceController {
         List<BookedSpaces> spaces = spaceService.findAllBookedSpacesForTenants(usersDto.getUserId());
         return new ResponseEntity<>(spaces, HttpStatus.OK);
     }
+
+
+    @PostMapping("/deleteById")
+    public ResponseEntity<?> deleteSpaceById(@RequestBody SpaceDto spaceDto) {
+        log.info("Deleting space with ID "+spaceDto.getSpaceId());
+        spaceService.deleteSpaceById(spaceDto.getSpaceId());
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> updateRulesById(@RequestBody SpaceDto spaceDto) {
+        log.info("Updating space with ID "+spaceDto.getSpaceId());
+        Spaces spaces = spaceService.updateRules(spaceDto);
+        return new ResponseEntity<>(spaces, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/updateSpaceImages")
+    public ResponseEntity<?> updateSpaceImages(@RequestBody SpaceDto spaceDto, CustomResponse customResponse) {
+        log.info("Incoming request to change image is "+spaceDto.toString());
+        try {
+            Spaces spaces = spaceService.updateSpaceImages(spaceDto);
+            customResponse = new CustomResponse(Responses.SPACE_CREATED.getCode(), Responses.SPACE_CREATED.getMessage());
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
+        }catch (Exception e){
+            log.info("Exception is "+e.getMessage());
+            customResponse = new CustomResponse(Responses.UNEXPECTED_ERROR.getCode(), e.getMessage());
+            return new ResponseEntity<>(customResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/filterspacesbyPreference")
+    public ResponseEntity<List<Spaces>> findSpacesByPreference(@RequestBody SpaceDto spaceDto) {
+
+        log.info("Ïncoming request to filter spaces "+spaceDto);
+        List<Spaces> allSpaces = spaceService.filterSpacesByPreference(spaceDto);
+        log.info("Back here::::::");
+        if(!allSpaces.isEmpty()) {
+            log.info("First space location is "+allSpaces.get(0));
+        }
+        return new ResponseEntity<>(allSpaces, HttpStatus.OK);
+    }
 }

@@ -13,4 +13,5 @@ import java.util.List;
 public interface SpaceImagesRepository extends JpaRepository<SpaceImages, Long> {
     List<SpaceImages> findBySpaceOwner(Users user);
     List<SpaceImages> findBySpaces(Spaces spaces);
+
 }
