@@ -61,8 +61,9 @@ public class Spaces {
     @Column(name = "size")
     private String size;
 
+    @ElementCollection
     @Column(name = "visit_day")
-    private String visitDays;
+    private List<String> visitDays;
 
     @ElementCollection
     @Column(name = "space_rules")

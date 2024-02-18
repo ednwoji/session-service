@@ -23,7 +23,7 @@ public class SpaceDto {
     private ArrayList<String> spaceRules;
 
     private String size;
-    private String visitDays;
+    private ArrayList<String> visitDays;
     private String visitStartTime;
     private String visitEndTime;
     private String practice;
