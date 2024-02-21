@@ -118,9 +118,24 @@ public class SpaceController {
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 
+    @PostMapping("/updateRulesById")
     public ResponseEntity<?> updateRulesById(@RequestBody SpaceDto spaceDto) {
         log.info("Updating space with ID "+spaceDto.getSpaceId());
         Spaces spaces = spaceService.updateRules(spaceDto);
+        return new ResponseEntity<>(spaces, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateLocationById")
+    public ResponseEntity<?> updateSpaceLocationById(@RequestBody SpaceDto spaceDto) {
+        log.info("Updating space with ID "+spaceDto.getSpaceId());
+        Spaces spaces = spaceService.updateLocation(spaceDto);
+        return new ResponseEntity<>(spaces, HttpStatus.OK);
+    }
+
+    @PostMapping("/updateUrlById")
+    public ResponseEntity<?> updateYoutubeUrl(@RequestBody SpaceDto spaceDto) {
+        log.info("Updating space with ID "+spaceDto.getSpaceId());
+        Spaces spaces = spaceService.updateYoutube(spaceDto);
         return new ResponseEntity<>(spaces, HttpStatus.OK);
     }
 

@@ -164,6 +164,17 @@ public class SpaceServiceImpl implements SpaceService {
         return null;
     }
 
+
+    @Override
+    public Spaces updateYoutube(SpaceDto spaceDto) {
+        Spaces spaces = spaceRepository.findBySpaceId(Long.valueOf(spaceDto.getSpaceId())).orElse(null);
+        if(spaces != null) {
+            spaces.setAdditionalDetails(spaceDto.getAdditionalDetails());
+            return spaceRepository.save(spaces);
+        }
+        return null;
+    }
+
     @Override
     public Spaces updateSpaceImages(SpaceDto spaceDto) {
         Spaces spaces1 = spaceRepository.findBySpaceId(Long.valueOf(spaceDto.getSpaceId())).orElse(null);
@@ -204,6 +215,21 @@ public class SpaceServiceImpl implements SpaceService {
 
 
 
+
+    }
+
+    @Override
+    public Spaces updateLocation(SpaceDto spaceDto) {
+
+        Spaces spaces = spaceRepository.findBySpaceId(Long.valueOf(spaceDto.getSpaceId())).orElse(null);
+        if(spaces != null) {
+            LatLng result = utils.getLatLng(spaceDto.getSpaceLocation());
+            spaces.setSpaceLocation(spaceDto.getSpaceLocation());
+            spaces.setLat(result.lat);
+            spaces.setLng(result.lng);
+            return spaceRepository.save(spaces);
+        }
+        return null;
 
     }
 

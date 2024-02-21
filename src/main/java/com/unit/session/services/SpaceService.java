@@ -30,4 +30,8 @@ public interface SpaceService {
     Spaces updateSpaceImages(SpaceDto spaceDto);
 
     List<Spaces> filterSpacesByPreference(SpaceDto spaceDto);
+
+    Spaces updateLocation(SpaceDto spaceDto);
+
+    Spaces updateYoutube(SpaceDto spaceDto);
 }
