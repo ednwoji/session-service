@@ -4,14 +4,17 @@ package com.unit.session.scheduler;
 import com.unit.session.Utilities.EmailSenderService;
 import com.unit.session.entities.BookedSpaces;
 import com.unit.session.repositories.BookedSpacesRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
+@Slf4j
 public class Tasks {
 
     @Autowired
@@ -23,8 +26,20 @@ public class Tasks {
     @Scheduled(cron = "0 * * * * *")
     public void sendEmailsToUsers() {
 
-        List<BookedSpaces> bookedSpacesList = bookedSpacesRepository.findByStartDateTimeAfter(LocalDateTime.now().minusHours(2));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.000'Z'");
+        String twoHoursAfter = LocalDateTime.now().plusHours(2).format(formatter);
+        log.info(twoHoursAfter);
 
+
+        List<BookedSpaces> bookedSpacesList = bookedSpacesRepository.findByStartDateTime(twoHoursAfter);
+
+//        List<BookedSpaces> bookedSpacesList = bookedSpacesRepository.findByStartDateTimeAfter(twoHoursAgo);
+
+        if(!bookedSpacesList.isEmpty()) {
+            for(BookedSpaces bookedSpaces : bookedSpacesList) {
+                log.info(bookedSpaces.getStartDateTime());
+            }
+        }
         bookedSpacesList.parallelStream()
                 .forEach(bookedSpaces -> {
                     String htmlContent = "<html><body style='font-family: Arial, sans-serif;'>" +
@@ -34,7 +49,7 @@ public class Tasks {
                             "<p>Dear " + bookedSpaces.getBookedBy().getFirstName() + ",</p>" +
                             "<p>Please be reminded of your session scheduled to hold in the next two hours.</p>" +
                             "<p>Space Location: " + bookedSpaces.getSpaceId().getSpaceLocation() + "</p>" +
-                            "<p><b><h2> Please be informed you can engage the host for extension of time if you're unable to make it to the location today</p></b></h2>" +
+                            "<p><b><h3> Please be informed you can engage the host for extension of time if you're unable to make it to the location today</p></b></h3>" +
                             "<p><b>Thank you for choosing Unit Session</b></p>" +
                             "</div>" +
                             "</div>" +

@@ -12,5 +12,5 @@ import java.util.List;
 @Repository
 public interface BookedSpacesRepository extends JpaRepository<BookedSpaces, Long> {
     List<BookedSpaces> findByBookedBy(Users users);
-    List<BookedSpaces> findByStartDateTimeAfter(LocalDateTime localDateTime);
+    List<BookedSpaces> findByStartDateTime(String startTime);
 }

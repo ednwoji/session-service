@@ -1,5 +1,6 @@
 package com.unit.session.Utilities;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -12,6 +13,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
+@Slf4j
 public class EmailSenderService {
 
     @Autowired
@@ -37,7 +39,7 @@ public class EmailSenderService {
 
         mailSender.send(message);
 
-//        System.out.println("Mail Sent successfully");
+        log.info("Mail Sent successfully");
 
 
 
