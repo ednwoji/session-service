@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,7 +28,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Users> users = userRepository.findByEmail(email);
+        Optional<Users> users = userRepository.findByEmailAndActive(email, true);
 
         if(users.isPresent()) {
             return users.get();
@@ -49,10 +50,12 @@ public class UserService implements UserDetailsService {
 
         Users users = new Users();
         users.setFirstName(userDto.getFirstName());
-        users.setLastName(users.getLastName());
+        users.setLastName(userDto.getLastName());
         users.setRole(Roles.valueOf(userDto.getRole()));
         users.setEmail(userDto.getEmail());
         users.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        users.setFullName(userDto.getFirstName()+" "+userDto.getLastName());
+        users.setActive(true);
 
         try{
             userRepository.save(users);
@@ -68,5 +71,16 @@ public class UserService implements UserDetailsService {
         String desiredRole = users.getRole().equals(Roles.HOST) ? Roles.TENANT.name() : Roles.HOST.name();
         users.setRole(Roles.valueOf(desiredRole));
         userRepository.save(users);
+    }
+
+    public List<Users> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+
+    public List<Users> disableUsers(Users users) {
+        users.setActive(!users.isActive());
+        userRepository.save(users);
+        return userRepository.findAll();
     }
 }

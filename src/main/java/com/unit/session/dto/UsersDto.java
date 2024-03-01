@@ -16,4 +16,5 @@ public class UsersDto {
     private String password;
     private String role;
     private String userId;
+    private String initiatorId;
 }

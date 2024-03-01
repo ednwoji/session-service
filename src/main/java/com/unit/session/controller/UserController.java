@@ -6,6 +6,7 @@ import com.unit.session.dto.CustomResponse;
 import com.unit.session.dto.Responses;
 import com.unit.session.dto.SpaceDto;
 import com.unit.session.dto.UsersDto;
+import com.unit.session.entities.Roles;
 import com.unit.session.entities.Spaces;
 import com.unit.session.entities.Users;
 import com.unit.session.servicesimpl.UserService;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.util.List;
 
 @RequestMapping("/users")
 @RestController
@@ -91,5 +93,35 @@ public class UserController {
             return new ResponseEntity<>(users, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/getUsers")
+    public ResponseEntity<?> getUserList(@RequestBody UsersDto usersDto) {
+        Users users = utils.validateUserId(usersDto.getUserId());
+        if(users != null) {
+            if(!users.getRole().equals(Roles.ADMIN)) {
+               return new ResponseEntity<>(new CustomResponse(Responses.UNAUTHORIZED_USER.getCode(), Responses.UNAUTHORIZED_USER.getMessage()), HttpStatus.UNAUTHORIZED);
+            }
+            return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new CustomResponse(Responses.WRONG_USERNAME.getCode(), Responses.WRONG_USERNAME.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+
+
+    @PostMapping("/modify-user")
+    public ResponseEntity<?> disableUser(@RequestBody UsersDto usersDto) {
+
+        Users users = utils.validateUserId(usersDto.getInitiatorId());
+        Users users1 = utils.validateUserId(usersDto.getUserId());
+        log.info(users1.toString());
+        if(users != null) {
+            if(!users.getRole().equals(Roles.ADMIN)) {
+                return new ResponseEntity<>(new CustomResponse(Responses.UNAUTHORIZED_USER.getCode(), Responses.UNAUTHORIZED_USER.getMessage()), HttpStatus.UNAUTHORIZED);
+            }
+            return new ResponseEntity<>(userService.disableUsers(users1), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new CustomResponse(Responses.WRONG_USERNAME.getCode(), Responses.WRONG_USERNAME.getMessage()), HttpStatus.UNAUTHORIZED);
+
     }
 }

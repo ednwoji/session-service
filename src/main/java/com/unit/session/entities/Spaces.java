@@ -3,6 +3,7 @@ package com.unit.session.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.ManyToAny;
 import org.hibernate.annotations.Type;
 
@@ -63,10 +64,12 @@ public class Spaces {
 
     @ElementCollection
     @Column(name = "visit_day")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> visitDays;
 
     @ElementCollection
     @Column(name = "space_rules")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> spaceRules;
 
     @Column(name = "visit_start_time")

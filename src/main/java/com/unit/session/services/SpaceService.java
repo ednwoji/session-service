@@ -34,4 +34,6 @@ public interface SpaceService {
     Spaces updateLocation(SpaceDto spaceDto);
 
     Spaces updateYoutube(SpaceDto spaceDto);
+
+    void removeSpaceById(String id);
 }

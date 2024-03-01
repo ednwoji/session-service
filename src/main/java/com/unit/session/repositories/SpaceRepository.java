@@ -37,6 +37,8 @@ public interface SpaceRepository extends JpaRepository<Spaces, Long> {
             " AND (a.chargePerDay BETWEEN :lowerPriceRange AND :upperPriceRange)")
         List<Spaces> findBySpaceLocationAndActiveAndSpaceTypeAndChargePerDayBetween(@Param("spaceType") String spaceType, @Param("spaceLocation") String spaceLocation, @Param("active") boolean active, @Param("lowerPriceRange") double lowerPriceRange, @Param("upperPriceRange") double upperPriceRange);
 
+    void deleteBySpaceId(Long spaceId);
+
 
 //    @Query("SELECT a FROM Spaces a WHERE 1=1" +
 //            " AND (COALESCE(:spaceType, null) is null or a.spaceType = :spaceType)"+

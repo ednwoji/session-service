@@ -8,6 +8,7 @@ public enum Responses {
     UNEXPECTED_ERROR("90", "Unexpected error occurred"),
     WRONG_USERNAME("02", "Wrong User ID"),
     WRONG_PASSWORD("03", "Wrong Password"),
+    UNAUTHORIZED_USER("29", "User Unauthorized for this operation"),
     WRONG_CREDENTIALS("04", "Username and password does not match");
 
 

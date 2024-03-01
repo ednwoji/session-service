@@ -315,4 +315,28 @@ public class SpaceServiceImpl implements SpaceService {
             }
         }
     }
+
+    @Override
+    @Transactional
+    public void removeSpaceById(String spaceId) {
+        try {
+            Spaces space = spaceRepository.findBySpaceId(Long.valueOf(spaceId)).orElse(null);
+            if (space != null) {
+                List<SpaceImages> spaceImages = spaceImagesRepository.findBySpaces(space);
+                List<BookedSpaces> bookedSpaces = bookedSpacesRepository.findBySpaceId(space);
+                if(!spaceImages.isEmpty()) {
+                    spaceImagesRepository.deleteBySpaces(space);
+                }
+
+                if(!bookedSpaces.isEmpty()) {
+                    bookedSpacesRepository.deleteBySpaceId(space);
+                }
+
+                spaceRepository.deleteBySpaceId(Long.valueOf(spaceId));
+            }
+        }
+        catch (Exception e) {
+            log.info(e.getMessage());
+        }
+    }
 }

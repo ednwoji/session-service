@@ -30,6 +30,9 @@ public class Users implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "full_name")
+    private String fullName;
+
     @Column(name = "email")
     private String email;
 
@@ -39,6 +42,9 @@ public class Users implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
     private Roles role;
+
+    @Column(name = "enabled")
+    private boolean active;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -165,4 +165,11 @@ public class SpaceController {
         }
         return new ResponseEntity<>(allSpaces, HttpStatus.OK);
     }
+
+    @PostMapping("/removeSpace")
+    public String deleteSpace(@RequestBody SpaceDto spaceDto) {
+        spaceService.removeSpaceById(spaceDto.getSpaceId());
+        return "Deleted";
+    }
 }
+
