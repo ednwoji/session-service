@@ -28,16 +28,11 @@ public class Tasks {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.000'Z'");
         String twoHoursAfter = LocalDateTime.now().plusHours(2).format(formatter);
-        log.info(twoHoursAfter);
-
 
         List<BookedSpaces> bookedSpacesList = bookedSpacesRepository.findByStartDateTime(twoHoursAfter);
 
-//        List<BookedSpaces> bookedSpacesList = bookedSpacesRepository.findByStartDateTimeAfter(twoHoursAgo);
-
         if(!bookedSpacesList.isEmpty()) {
             for(BookedSpaces bookedSpaces : bookedSpacesList) {
-                log.info(bookedSpaces.getStartDateTime());
             }
         }
         bookedSpacesList.parallelStream()

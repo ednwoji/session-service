@@ -3,6 +3,7 @@ package com.unit.session.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,6 +46,11 @@ public class Users implements UserDetails {
 
     @Column(name = "enabled")
     private boolean active;
+
+    @Lob
+    @Type(type="org.hibernate.type.TextType")
+    @Column(name = "profile_picture")
+    private String profilePicture;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

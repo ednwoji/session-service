@@ -17,4 +17,5 @@ public class UsersDto {
     private String role;
     private String userId;
     private String initiatorId;
+    private String profilePicture;
 }

@@ -19,8 +19,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 
 @RequestMapping("/users")
@@ -41,9 +46,25 @@ public class UserController {
     private Utils utils;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody UsersDto userDto, CustomResponse customResponse) {
+//    public ResponseEntity<?> createUser(@RequestBody UsersDto userDto, CustomResponse customResponse) {
+    public ResponseEntity<?> createUser(@RequestParam("firstName") String firstName,
+                                        @RequestParam("profilePicture") MultipartFile profilePicture,
+                                        @RequestParam("lastName") String lastName,
+                                        @RequestParam("role") String role,
+                                        @RequestParam("email") String email,
+                                        @RequestParam("password") String password, CustomResponse customResponse) throws IOException {
 
-        log.info("Payload is "+userDto.toString());
+
+        log.info("Payload for user creation is:::: ");
+        byte[] fileBytes = profilePicture.getBytes();
+        String mimeType = profilePicture.getContentType();
+
+        String base64String = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(fileBytes);
+
+
+
+        UsersDto userDto = new UsersDto(firstName,lastName,email,password,role,null,null,base64String);
+
         try {
 
             Users users = userService.createNewUser(userDto);
@@ -96,6 +117,18 @@ public class UserController {
     }
 
 
+    @PostMapping("/updatePicture")
+    public ResponseEntity<?> updateProfilePicture(@RequestBody UsersDto usersDto) {
+        log.info("Incoming request to update profile pic::: "+usersDto.toString());
+        Users users = utils.validateUserId(usersDto.getUserId());
+        if(users != null) {
+            userService.updateProfilePicture(users, usersDto);
+            return new ResponseEntity<>(users, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+
     @PostMapping("/getUsers")
     public ResponseEntity<?> getUserList(@RequestBody UsersDto usersDto) {
         Users users = utils.validateUserId(usersDto.getUserId());
@@ -124,4 +157,15 @@ public class UserController {
         return new ResponseEntity<>(new CustomResponse(Responses.WRONG_USERNAME.getCode(), Responses.WRONG_USERNAME.getMessage()), HttpStatus.UNAUTHORIZED);
 
     }
+
+
+    @PostMapping("/getPicture")
+    public ResponseEntity<?> findProfilePictureByUser(@RequestBody UsersDto usersDto) {
+        Users users = utils.validateUserId(usersDto.getUserId());
+        if(users != null) {
+            return new ResponseEntity<>(users.getProfilePicture(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Invalid User", HttpStatus.OK);
+    }
+
 }

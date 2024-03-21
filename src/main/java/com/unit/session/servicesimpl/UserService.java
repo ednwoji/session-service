@@ -31,6 +31,7 @@ public class UserService implements UserDetailsService {
         Optional<Users> users = userRepository.findByEmailAndActive(email, true);
 
         if(users.isPresent()) {
+            users.get().setProfilePicture(null);
             return users.get();
         }
         else {
@@ -55,6 +56,7 @@ public class UserService implements UserDetailsService {
         users.setEmail(userDto.getEmail());
         users.setPassword(passwordEncoder.encode(userDto.getPassword()));
         users.setFullName(userDto.getFirstName()+" "+userDto.getLastName());
+        users.setProfilePicture(userDto.getProfilePicture());
         users.setActive(true);
 
         try{
@@ -82,5 +84,10 @@ public class UserService implements UserDetailsService {
         users.setActive(!users.isActive());
         userRepository.save(users);
         return userRepository.findAll();
+    }
+
+    public void updateProfilePicture(Users users, UsersDto usersDto) {
+        users.setProfilePicture(usersDto.getProfilePicture());
+        userRepository.save(users);
     }
 }

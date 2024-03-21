@@ -11,10 +11,16 @@ import com.unit.session.entities.Spaces;
 import com.unit.session.services.SpaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -27,8 +33,31 @@ public class SpaceController {
     @Autowired
     private SpaceService spaceService;
 
-    @PostMapping("/add-space")
-    public ResponseEntity<?> addSpace(@RequestBody SpaceDto spaceDto, CustomResponse customResponse) {
+
+
+//    @PostMapping("/add-space")
+//    public ResponseEntity<?> addSpace(@RequestBody SpaceDto spaceDto, CustomResponse customResponse) {
+    @PostMapping(value = "/add-space", consumes = "multipart/form-data")
+    public ResponseEntity<?> addSpace(@RequestParam("spaceImage") List<MultipartFile> spaceImage,
+                                      @RequestParam("spaceLocation") String spaceLocation,
+                                      @RequestParam("userId") String userId,
+                                      @RequestParam("spaceType") String spaceType,
+                                      @RequestParam("spaceRules") ArrayList<String> spaceRules,
+                                      @RequestParam("description") String description,
+                                      @RequestParam("chargePerDay") String chargePerDay,
+                                      @RequestParam("size") String size,
+                                      @RequestParam("visitDays") ArrayList<String> visitDays,
+                                      @RequestParam("visitStartTime") String visitStartTime,
+                                      @RequestParam("visitEndTime") String visitEndTime,
+                                      @RequestParam("practice") String practice,
+                                      @RequestParam("musicDetails") String musicDetails,
+                                      @RequestParam("additionalDetails") String additionalDetails,
+                                      CustomResponse customResponse) throws IOException {
+
+        ArrayList<String> convertedImages = (ArrayList<String>) convertImagestoString(spaceImage);
+
+        SpaceDto spaceDto = new SpaceDto(userId,spaceLocation,spaceType,null,null,chargePerDay,description,null,spaceRules,size,
+                visitDays,visitStartTime,visitEndTime,practice,musicDetails,additionalDetails,0,null,null,0,0,convertedImages);
 
         log.info("Incoming payload for spaces creation::::::::: ");
 
@@ -42,6 +71,18 @@ public class SpaceController {
         }
     }
 
+    public List<String> convertImagestoString(List<MultipartFile> files) throws IOException {
+        List<String> convertedFiles = new ArrayList<>();
+        for(MultipartFile file : files) {
+            byte[] fileBytes = file.getBytes();
+            String mimeType = file.getContentType();
+            String base64String = "data:" + mimeType + ";base64," + Base64.getEncoder().encodeToString(fileBytes);
+
+            convertedFiles.add(base64String);
+        }
+       return convertedFiles;
+    }
+
     @PostMapping("/getSpaces")
     public ResponseEntity<?> findAllSpacesByUserId(@RequestBody UsersDto usersDto) {
         log.info("Incoming payload for space retrieval is "+usersDto.toString());
@@ -50,7 +91,7 @@ public class SpaceController {
             log.info("Retrieved Space is "+allSpaces.get(0).getSpaceLocation());
             return new ResponseEntity<>(allSpaces, HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
 

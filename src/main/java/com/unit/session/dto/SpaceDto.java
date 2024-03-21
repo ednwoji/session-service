@@ -3,6 +3,7 @@ package com.unit.session.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.Column;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class SpaceDto {
     private String userId;
     private String spaceLocation;
     private String spaceType;
-    private ArrayList<String> spaceImage;
+    private ArrayList<MultipartFile> spaceImages;
     private String spaceId;
     private String chargePerDay;
     private String description;
@@ -35,5 +36,6 @@ public class SpaceDto {
 
     private double lowerPriceRange;
     private double upperPriceRange;
+    private ArrayList<String> spaceImage;
 
 }
